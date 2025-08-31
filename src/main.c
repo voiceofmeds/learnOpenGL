@@ -3,9 +3,9 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-// we use snake_case for our own functions
+// use snake_case for our own functions
 // camelCase are glfw/glad functions
-// this is to easily distinguish between them
+// this is to easily know each one from another
 
 typedef struct {
   GLFWwindow *window;
@@ -16,38 +16,55 @@ typedef struct {
   GLFWwindow *share;
 } state_t;
 
-void glfw_error_callback(const int error, const char* description);
+void glfw_error_callback(const int error, const char *description);
+void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+
+void init_error(void);
 void init_glfw(void);
 void init_window(state_t *state);
+void init_glad(void);
+void init_render(state_t *state);
+
+void loop(state_t *state);
 
 int main(void) {
-  // we zero-initialize the state
+  // zero-initialize the state
   state_t state = {
     .width = 800,
     .height = 600,
     .title = "Cube"
   };
 
-  glfwSetErrorCallback(glfw_error_callback);
+  init_error();
   init_glfw();
-
   init_window(&state);
+  init_glad();
+  init_render(&state);
+  loop(&state);
 
   return 0;
 }
 
-void glfw_error_callback(const int error, const char* description) {
+void glfw_error_callback(const int error, const char *description) {
   fprintf(stderr, "GLFW Error (%d): %s\n", error, description);
 }
 
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+  glViewport(0, 0, width, height);
+}
+
+void init_error(void) {
+  glfwSetErrorCallback(glfw_error_callback);
+}
+
 void init_glfw(void) {
-  // if initializing glfw fails exit the program as it is critical
+  // if initializing glfw fails exit the program
   if (!glfwInit()) {
     glfwTerminate();
     exit(-2);
   };
 
-  // we set up the opengl version to 3.3 and use the core profile
+  // set up the opengl version to 3.3 and use the core profile
   // without this the program might not run on some systems
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -67,13 +84,34 @@ void init_window(state_t *state) {
     state->monitor,
     state->share
   );
-  // if creating the window fails exit the program as it is also critical
+  // if creating the window fails exit the program
   if (window == NULL) {
     glfwTerminate();
     exit(-2);
   };
-  // we make state->window point to this new window
-  // then we make the current context the newly made window
+  // make state->window point to this new window
+  // then make the current context the newly made window
   state->window = window;
   glfwMakeContextCurrent(state->window);
+}
+
+void init_glad(void) {
+  // if initializing glad fails exit the program
+  if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+    glfwTerminate();
+    exit(-3);
+  }
+}
+
+void init_render(state_t *state) {
+  glViewport(0, 0, state->width, state->height);
+
+  glfwSetFramebufferSizeCallback(state->window, framebuffer_size_callback);
+}
+
+void loop(state_t *state) {
+  while (!glfwWindowShouldClose(state->window)) {
+    glfwSwapBuffers(state->window);
+    glfwPollEvents();
+  }
 }

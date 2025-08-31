@@ -2,7 +2,7 @@
 - CMake (>=3.11)
 - C compiler compatible with CMake (e.g., GCC, Clang, MSVC)
 
-## Recommendations
+## Recommendations (Optional)
 - Install Ninja and use it as CMake's generator for this project (for faster
 builds)
 
