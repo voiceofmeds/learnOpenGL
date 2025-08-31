@@ -21,7 +21,7 @@ void init_glfw(void);
 void init_window(state_t *state);
 
 int main(void) {
-  // we izero-initialize the state
+  // we zero-initialize the state
   state_t state = {
     .width = 800,
     .height = 600,

@@ -1,9 +1,10 @@
 ## Requirements
 - CMake (>=3.11)
-- A C compiler compatible with CMake
+- C compiler compatible with CMake (e.g., GCC, Clang, MSVC)
 
 ## Recommendations
-- Install Ninja and use it as CMake's generator for this project
+- Install Ninja and use it as CMake's generator for this project (for faster
+builds)
 
 ## Compiling
 Clone this repository
@@ -12,11 +13,11 @@ git clone https://github.com/voiceofmeds/learnOpenGL.git
 cd learnOpenGL
 ```
 
-Run CMake
+Using default generator
 ```
 cmake -S . -B build
 ```
-or if you want to use Ninja
+Using Ninja (recommended)
 ```
 cmake -G Ninja -S . -B build
 ```
@@ -24,4 +25,17 @@ cmake -G Ninja -S . -B build
 Build the project
 ```
 cmake --build build --config Release
+```
+
+Go to directory where the executable is
+```
+cd build
+```
+Then run the executable
+```
+./learnOpenGL
+```
+If on Windows, do
+```
+./learnOpenGL.exe
 ```
