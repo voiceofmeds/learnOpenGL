@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(learnOpenGL VERSION 0.1.0 LANGUAGES C)
+project(learnOpenGL VERSION 0.1.1 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -40,7 +40,7 @@ include_directories(
     lib/glad/include
 )
 
-file(GLOB_RECURSE SRC_FILES src/*.c)
+file(GLOB SRC_FILES src/*.c)
 
 add_executable(learnOpenGL ${SRC_FILES})
 

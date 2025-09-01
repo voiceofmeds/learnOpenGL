@@ -3,9 +3,12 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-// use snake_case for our own functions
+
+#include "input.h"
+
+// use snake_case for own functions
 // camelCase are glfw/glad functions
-// this is to easily know each one from another
+// to know each one from the other clearly
 
 typedef struct {
   GLFWwindow *window;
@@ -16,16 +19,25 @@ typedef struct {
   GLFWwindow *share;
 } state_t;
 
-void glfw_error_callback(const int error, const char *description);
+// "We register the callback functions after we've created the window
+// and before the render loop is initiated"
+// 
+// Maybe the error callback doesn't count?
+void glfw_error_callback(int error, const char *description);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
+void process_input_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
-void init_error(void);
 void init_glfw(void);
 void init_window(state_t *state);
 void init_glad(void);
-void init_render(state_t *state);
 
-void loop(state_t *state);
+// these set callbacks
+void init_error(void);
+void init_viewport(state_t *state);
+void init_input(state_t *state);
+
+void render(void);
+void init_loop(state_t *state);
 
 int main(void) {
   // zero-initialize the state
@@ -35,17 +47,22 @@ int main(void) {
     .title = "Cube"
   };
 
-  init_error();
+  // initialize everything in order
   init_glfw();
   init_window(&state);
   init_glad();
-  init_render(&state);
-  loop(&state);
+  init_error();
+  init_viewport(&state);
+  init_input(&state);
+  init_loop(&state);
 
+  // terminate GLFW (clean/delete all of GLFW resources that were allocated)
+  // then exit the program
+  glfwTerminate();
   return 0;
 }
 
-void glfw_error_callback(const int error, const char *description) {
+void glfw_error_callback(int error, const char *description) {
   fprintf(stderr, "GLFW Error (%d): %s\n", error, description);
 }
 
@@ -53,8 +70,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
 }
 
-void init_error(void) {
-  glfwSetErrorCallback(glfw_error_callback);
+void process_input_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+  if (key_handlers[key]) key_handlers[key](window);
 }
 
 void init_glfw(void) {
@@ -70,9 +87,9 @@ void init_glfw(void) {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-  #endif
+#ifdef __APPLE__
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 }
 
 void init_window(state_t *state) {
@@ -103,15 +120,39 @@ void init_glad(void) {
   }
 }
 
-void init_render(state_t *state) {
-  glViewport(0, 0, state->width, state->height);
+void init_error(void) {
+  glfwSetErrorCallback(glfw_error_callback);
+}
 
+void init_viewport(state_t *state) {
   glfwSetFramebufferSizeCallback(state->window, framebuffer_size_callback);
 }
 
-void loop(state_t *state) {
+void init_input(state_t *state) {
+  glfwSetKeyCallback(state->window, process_input_callback);
+}
+
+void render(void) {
+  // Whenever we call glClear and clear the color buffer,
+  // the entire color buffer will be filled with the color as configured by glClearColor
+  //
+  // glClearColor is a state-setting function
+  // glClear is a state-using function
+  glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void init_loop(state_t *state) {
   while (!glfwWindowShouldClose(state->window)) {
-    glfwSwapBuffers(state->window);
+    // checks if any events are triggered
+    // updates the window state
+    // and calls corresponding functions (callbacks, etc..)
     glfwPollEvents();
+
+    render();
+
+    // swaps the back buffer (the buffer where everything is drawn to)
+    // to the front buffer
+    glfwSwapBuffers(state->window);
   }
 }
