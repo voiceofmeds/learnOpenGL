@@ -12,8 +12,8 @@
 
 typedef struct {
   GLFWwindow *window;
-  unsigned int width;
-  unsigned int height;
+  int width;
+  int height;
   char *title;
   GLFWmonitor *monitor;
   GLFWwindow *share;
