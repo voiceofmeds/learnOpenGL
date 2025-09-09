@@ -1,10 +1,10 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "input.h"
+#include "utils.h"
 
 typedef struct {
   GLFWwindow *window;
@@ -41,10 +41,11 @@ int main(void) {
   };
 
   // initialize everything in order
+  init_error();
   init_glfw();
+
   init_window(&state);
   init_glad();
-  init_error();
   init_viewport(&state);
   init_input(&state);
   init_loop(&state);
@@ -56,7 +57,7 @@ int main(void) {
 }
 
 void glfw_error_callback(int error, const char *description) {
-  fprintf(stderr, "GLFW Error (%d): %s\n", error, description);
+  fprintf(stderr, "[%d]GLFW Error: %s\n", error, description);
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
@@ -67,7 +68,7 @@ void init_glfw(void) {
   // if initializing glfw fails exit the program
   if (!glfwInit()) {
     glfwTerminate();
-    exit(-2);
+    panic("Failed to initialize GLFW", -1);
   };
 
   // set up the opengl version to 3.3 and use the core profile
@@ -85,16 +86,18 @@ void init_window(state_t *state) {
   // we create the window
   GLFWwindow *window = glfwCreateWindow(
     state->width == 0 ? 800 : state->width,
-    state->height == 0 ? 600: state->height,
+    state->height == 0 ? 600 : state->height,
     state->title == NULL ? "Default" : state->title,
     state->monitor == NULL ? NULL : state->monitor,
     state->share == NULL ? NULL : state->share
   );
+
   // if creating the window fails exit the program
   if (window == NULL) {
     glfwTerminate();
-    exit(-2);
+    panic("Failed to initialize GLFW", -2);
   };
+
   // make state->window point to this new window
   // then make the current context the newly made window
   state->window = window;
@@ -105,7 +108,7 @@ void init_glad(void) {
   // if initializing glad fails exit the program
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     glfwTerminate();
-    exit(-3);
+    panic("Failed to initialize GLAD", -3);
   }
 }
 

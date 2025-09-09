@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.11)
-project(learnOpenGL VERSION 0.1.1 LANGUAGES C)
+project(learnOpenGL VERSION 0.1.0 LANGUAGES C)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED ON)
@@ -29,7 +29,7 @@ FetchContent_Declare(
   glfw
   GIT_REPOSITORY https://github.com/glfw/glfw.git
   GIT_TAG        3.3-stable
-  SOURCE_DIR     ${GLFW_SOURCE_DIR}  # <-- force it here so editor sees it
+  SOURCE_DIR     ${GLFW_SOURCE_DIR}
 )
 
 FetchContent_MakeAvailable(glfw)
