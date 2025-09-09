@@ -71,7 +71,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
 }
 
 void process_input_callback(GLFWwindow *window, int key, int scancode, int action, int mods) { 
-  if (key_handlers[key] && 0 <= key && key < key_handler_size) key_handlers[key](window);
+  if (0 <= key && key < key_handler_size && key_handlers[key]) key_handlers[key](window);
 }
 
 void init_glfw(void) {
