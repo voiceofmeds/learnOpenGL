@@ -6,10 +6,6 @@
 
 #include "input.h"
 
-// use snake_case for own functions
-// camelCase are glfw/glad functions
-// to know each one from the other clearly
-
 typedef struct {
   GLFWwindow *window;
   int width;
@@ -19,13 +15,8 @@ typedef struct {
   GLFWwindow *share;
 } state_t;
 
-// "We register the callback functions after we've created the window
-// and before the render loop is initiated"
-// 
-// Maybe the error callback doesn't count?
 void glfw_error_callback(int error, const char *description);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-void process_input_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
 void init_glfw(void);
 void init_window(state_t *state);
@@ -40,11 +31,13 @@ void render(void);
 void init_loop(state_t *state);
 
 int main(void) {
-  // zero-initialize the state
   state_t state = {
+    .window = NULL,
     .width = 800,
     .height = 600,
-    .title = "Cube"
+    .title = "Cube",
+    .monitor = NULL,
+    .share = NULL,
   };
 
   // initialize everything in order
@@ -68,10 +61,6 @@ void glfw_error_callback(int error, const char *description) {
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
   glViewport(0, 0, width, height);
-}
-
-void process_input_callback(GLFWwindow *window, int key, int scancode, int action, int mods) { 
-  if (0 <= key && key < key_handler_size && key_handlers[key]) key_handlers[key](window);
 }
 
 void init_glfw(void) {
@@ -98,8 +87,8 @@ void init_window(state_t *state) {
     state->width == 0 ? 800 : state->width,
     state->height == 0 ? 600: state->height,
     state->title == NULL ? "Default" : state->title,
-    state->monitor,
-    state->share
+    state->monitor == NULL ? NULL : state->monitor,
+    state->share == NULL ? NULL : state->share
   );
   // if creating the window fails exit the program
   if (window == NULL) {

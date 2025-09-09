@@ -3,9 +3,5 @@
 
 #include <GLFW/glfw3.h>
 
-// maybe this could cause an error later?
-extern void (*key_handlers[]) (GLFWwindow *window);
-extern unsigned int key_handler_size;
-
-void terminate_glfw(GLFWwindow *window);
+void process_input_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 #endif
